@@ -22,7 +22,12 @@ class Recordatorio {
     bool isCompletado() const;
     void marcarComoCompletado();
 
-    string to_string() const;
+    void conmutarEstado(); // Cambia entre completado y pendiente
+
+    // serializacion
+
+    string serializar() const;
+    static Recordatorio deserializar(const string &linea);
 };
 
 #endif

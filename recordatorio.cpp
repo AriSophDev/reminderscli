@@ -1,26 +1,32 @@
-#ifndef GESTOR_H
-#define GESTOR_H
-
 #include "recordatorio.h"
-#include <vector>
+#include <sstream>
 
 using namespace std;
 
-class GestorRecordatorios {
-  private:
-    vector<Recordatorio> recordatorios;
-    string archivoDatos;
+Recordatorio::Recordatorio(const string &id, const string &texto,
+                           bool completado)
+    : id(id), texto(texto), completado(completado) {}
 
-    void cargarDesdearchivo();
-    void guardarEnArchivo();
+string Recordatorio::getID() const { return id; }
+string Recordatorio::getTexto() const { return texto; }
+bool Recordatorio::isCompletado() const { return completado; }
 
-  public:
-    GestorRecordatorios(const string &rutaArchivo);
+void Recordatorio::marcarComoCompletado() { completado = true; }
 
-    void agregarRecordatorio(const string &texto);
-    void listarRecordatorios() const;
-    void completarRecordatorio(const string &id);
-    void eliminarRecordatorio(const string &id);
-};
+void Recordatorio::conmutarEstado() { completado = !completado; }
 
-#endif
+string Recordatorio::serializar() const {
+    return id + ";" + texto + ";" + (completado ? "1" : "0");
+}
+
+Recordatorio Recordatorio::deserializar(const std::string &linea) {
+    stringstream ss(linea);
+    string id, texto, comp_str;
+
+    getline(ss, id, ';');
+    getline(ss, texto, ';');
+    getline(ss, comp_str, ';');
+
+    bool completado = (comp_str == "1");
+    return Recordatorio(id, texto, completado);
+}
